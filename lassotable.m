@@ -1,8 +1,4 @@
-%this function takes jackknife output (coefficient, tstats and confidence interval)
-%as input and outputs a latex table of selected group of countries.
-
-
-function[]=jacknifetable(est,group)
+function[]=lassotable(est,group)
 ctrylist={'AUSTRALIA','AUSTRIA','BELGIUM' ,'BRAZIL' ...
     'CANADA'  ,'CHILE'  ,'CHINA','COLOMBIA','CZECHREPUBLIC',...
    'DENMARK','EGYPT','FINLAND','FRANCE','GERMANY','GREECE' ,...
@@ -29,22 +25,21 @@ emidx(i)=find(strcmp(ctrylist,emerging(i)));
 end
   varlist={'SIZE','BM','fht','ivol','ret','roe','cash','invop','capex','ppe','rdratio','DIV','dy','close','lev','analyst','fxsale','ADR'};
 if group=='dm'
-    iso=info.dmiso;
-    idx=info.dmidx;
+    iso=dmiso;
+    idx=dmidx;
 else
-    iso=info.emiso;
-    idx=info.emidx;
+    iso=emiso;
+    idx=emidx;
 end
-nvar=size(io.beta,1);
-ncty=size(io.beta,2);
+nvar=size(est.beta,1);
+ncty=size(est.beta,2);
 N=est.N;
 betadisp=printbeta(est);
 tstatdisp=printtstat(est);
-cidisp=printinterval(est);
     n=size(est.beta,1);  %number of variables   
-  nselected=sum(est.selected(:,idx),2);
+nselected=sum(est.selected(:,idx),2);
 [~,order]=sort(nselected,'descend');  
- fileout = fopen(sprintf('jacknife%s %s.tex',group,io.ynames{:}),'w');
+ fileout = fopen(sprintf('lasso%s %s.tex',group,est.ynames),'w');
  
 fprintf(fileout, '\\begin{sidewaystable}[h!] \n');
 fprintf(fileout,'\\centering\n ');
@@ -56,7 +51,6 @@ fprintf(fileout,strcat(repmat('& %s ',1,length(iso)),'\\\\ \n'),iso{:});
 for i=1:nvar
 fprintf(fileout,strcat('%s',repmat( ' %s ',1,length(iso)),'\\\\ \n'),varlist{order(i)},betadisp(i,idx));
 fprintf(fileout,strcat(repmat('%s ',1,length(iso)),'\\\\ \n'),tstatdisp(i,idx));
-fprintf(fileout, strcat(repmat('%s ',1,length(iso)),'\\\\ \n'),cidisp(i,idx));
 end
 fprintf(fileout, '\\hline \n');
 fprintf(fileout, strcat('N',repmat('& %d ',1,length(iso)),'\\\\ \n'),N(idx));

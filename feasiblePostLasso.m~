@@ -10,8 +10,9 @@ if isempty(clusterVar)
     if isempty(beta0)
         Syx = x.*(y*ones(1,p));
         Ups0 = sqrt(sum(Syx.^2)/n);
+        Ups0(1)=0;
         b = LassoShooting2(x, y , .5*lambda, Ups0, 'Verbose', Verbose, 'beta', beta0);
-        use = abs(b) > TolZero;
+        %use = abs(b) > TolZero;
         
         e = y-x(:,use)*(x(:,use)\y);
     else
@@ -32,8 +33,8 @@ if isempty(clusterVar)
        
         d0 = norm(Ups0-Ups1);
         b = LassoShooting2(x, y , lambda, Ups1 , 'Verbose', Verbose, 'beta', b);
-        use = abs(b) > TolZero;
-        
+        %use = abs(b) > TolZero;
+        use = [true;abs(b(2:end)) > TolZero];
         e = y-x(:,use)*(x(:,use)\y);
         Ups0 = Ups1;
         Syx = x.*(e*ones(1,p));
@@ -62,6 +63,7 @@ else
         e = y - x*beta0;
         Syx = x.*(e*ones(1,p));
         Ups0 = sqrt(sum((Dt'*Syx).^2)/n);
+        Ups0(1)=0; %do not penalize constant
         b = LassoShooting2(x, y , lambda, Ups0, 'Verbose', Verbose, 'beta', beta0);
         use = abs(b) > TolZero;
         e = y-x(:,use)*(x(:,use)\y);
@@ -70,17 +72,18 @@ else
     kk = 1;
     Syx = x.*(e*ones(1,p));
     Ups1 = sqrt(sum((Dt'*Syx).^2)/n);
+    Ups1(1)=0; %not penalize constant
     while norm(Ups0-Ups1) > UpsTol && kk < MaxIter
         
         d0 = norm(Ups0-Ups1);
         b = LassoShooting2(x, y , lambda, Ups1 , 'Verbose', Verbose, 'beta', b);
-        use = abs(b) > TolZero;
+        use = [abs(b) > TolZero];
         e = y-x(:,use)*(x(:,use)\y);
         Ups0 = Ups1;
         Syx = x.*(e*ones(1,p));
         Ups1 = sqrt(sum((Dt'*Syx).^2)/n);
 
-      
+        kk = kk+1;
         d1 = norm(Ups0 - Ups1);
         if d1 == d0
             Ups0 = Ups1;

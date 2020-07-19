@@ -107,7 +107,7 @@ for ci=1:length(ctrylist)
 %   if strcmp(ctry,'COLOMBIA' )
 %     omityear=1;
 % else omityear=0;
-end
+%end
 ynames='io';
   ctrytbl=nustable(strcmp(nustable.ctry,ctry),:);
   year=table2array(ctrytbl(:,'year'));
@@ -124,8 +124,6 @@ colnames=varlist(selected(:,ci));
 ynames={'io'};
 y=table2array(ctrytbl(:,ynames));
 X=[table2array(ctrytbl(:,varlist)),yeardummy(:,2:end)];
-X=[table2array(ctrytbl(:,colnames))];
-%X=[table2array(ctrytbl(:,colnames))];  %exclude one dummy
 idx=~any(isnan(X), 2); %valid non-nan index
 y=y(idx);
 id=numid(idx);
@@ -140,7 +138,6 @@ tstat(selected(:,ci),ci)=wald.value(1:length(colnames)); %if omit then total yea
 p(selected(:,ci),ci)=wald.p(1:length(colnames));
 N(ci)=reg3.N;
 end
-%12 variables selected in colombia 
 
 info.developed=["AUSTRALIA","AUSTRIA", "BELGIUM","CANADA","DENMARK","FINLAND","FRANCE","GERMANY","HONGKONG","IRELAND","ISRAEL","ITALY","JAPAN","LUXEMBOURG","NETHERLANDS,""NEWZEALAND","NORWAY","PORTUGAL","SINGAPORE","SPAIN","SWEDEN","SWITZERLAND","UNITEDKINGDOM"];
 info.emerging={'BRAZIL','CHILE','CHINA','COLOMBIA','CZECHREPUBLIC','EGYPT','GREECE','HUNGARY','INDIA','INDONESIA','MALAYSIA','MEXICO','MOROCCO','PERU','PHILIPPINES','POLAND','RUSSIA','SOUTHAFRICA','SOUTHKOREA','TAIWAN','THAILAND','TURKEY'};

@@ -1,7 +1,7 @@
 %prepare data
 table=readtable('holdings_fundamental_clean.csv');
-
-addpath('paneldata');
+p=findpath('paneldata');
+addpath(p);
 
 %jacknife procedure 
 nustable=table(table.isus==0,:);
@@ -25,7 +25,7 @@ for ci=1:length(ctrylist)
   yeardummy=dummyvar(categorical(year));
   dscd=table2array(ctrytbl(:,'dscd'));
   [~,~,numid]=unique(dscd);
-
+out(i).ynames=yynames{i};
   [out(i).low(:,ci),out(i).high(:,ci)]=jacknife(ctrytbl, out(i).ynames);
   out(i).selected(:,ci)=~((out(i).low(:,ci)<=0)&(0<=out(i).high(:,ci)));
 
