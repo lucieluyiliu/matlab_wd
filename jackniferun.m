@@ -15,7 +15,7 @@ out(i).beta=zeros(nvar,nctry);
 out(i).low=zeros(nvar, nctry);
 out(i).high=zeros(nvar, nctry);
 out(i).tstat=zeros(nvar,nctry);
-out(i).p=zeros(nvar,nctry);
+out(i).pvalue=zeros(nvar,nctry);
 out(i).selected=boolean(zeros(nvar,nctry));
 out(i).N=zeros(nctry,1);
 for ci=1:length(ctrylist)
@@ -31,24 +31,25 @@ out(i).ynames=yynames{i};
 
 %arrange variable by number of countries being selected
 
-colnames=varlist(out(i).selected(:,ci));
+colnames=varlist(jkout(i).selected(:,ci));
 out(i).ynames=yynames{i};
-y=table2array(ctrytbl(:,out(i).ynames));
+y=table2array(ctrytbl(:,jkout(i).ynames));
 
-X=[table2array(ctrytbl(:,colnames)),yeardummy(:,2+omityear:end)];
+X=[table2array(ctrytbl(:,colnames)),yeardummy(:,2:end)];
 %X=[table2array(ctrytbl(:,colnames))];  %exclude one dummy
 idx=~any(isnan(X), 2); %valid non-nan index
 y=y(idx);
 id=numid(idx);
 X=X(idx,:); %if any of the columns is nan
 Xkeep=findNonCollinear(X);
+
 X=X(:,Xkeep);
 time=year(idx);
 reg3=panel(id,time,y,X,'po','vartype','cluster','clusterid',id);
 wald=waldsigtest(reg3);
 out(i).beta(out(i).selected(:,ci),ci)=reg3.coef(1:length(colnames));  %omit year dummy and constant
 out(i).tstat(out(i).selected(:,ci),ci)=wald.value(1:length(colnames)); %if omit then total year dummy-2?
-out(i).p(out(i).selected(:,ci),ci)=wald.p(1:length(colnames));
+out(i).pvalue(out(i).selected(:,ci),ci)=wald.p(1:length(colnames));
 out(i).N(ci)=reg3.N;
 end
 

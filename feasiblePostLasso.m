@@ -39,6 +39,7 @@ if isempty(clusterVar)
         Syx = x.*(e*ones(1,p));
         Ups1 = sqrt(sum(Syx.^2)/n);
         kk = kk+1;
+     
         d1 = norm(Ups0 - Ups1);
         if d1 == d0
             Ups0 = Ups1;
@@ -80,7 +81,7 @@ else
         Syx = x.*(e*ones(1,p));
         Ups1 = sqrt(sum((Dt'*Syx).^2)/n);
 
-      
+        kk = kk+1;
         d1 = norm(Ups0 - Ups1);
         if d1 == d0
             Ups0 = Ups1;

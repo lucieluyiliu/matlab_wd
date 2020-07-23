@@ -14,6 +14,10 @@ developed={'AUSTRALIA','AUSTRIA','BELGIUM',...
 emerging={'BRAZIL','CHILE','CHINA','COLOMBIA','CZECHREPUBLIC','EGYPT','GREECE','HUNGARY','INDIA','INDONESIA','MALAYSIA','MEXICO','MOROCCO','PERU','PHILIPPINES','POLAND','RUSSIA','SOUTHAFRICA','SOUTHKOREA','TAIWAN','THAILAND','TURKEY'};
 dmiso={'AU','AT','BE','CA','DK','FI','FR','DE','HK','IE','IL','IT','JP','LU','NL','NZ','NO','PT','SG','ES','SE','CH','UK'};
 emiso={'BR','CL','CN','CO','CZ','EG','GR','HU','IN','ID','MY','MX','MA','PE','PH','PL','RU','ZA','KR','TW','TH','TR'};
+dmname={'Australia','Austria','Belgium','Canada','Denmark','Finland','France','Germany','HK','Ireland','Israel','Italy','Japan','Luxembourg','Netherlands','New Zealand','Norway','Portugal','Singapore','Spain','Sweden','Switzerland','UK'};
+emname={'Brazil','Chile','China','Clombia','Czech Republic','Egypt','Greece','Hungary','India','Indonesia','Malaysia','Mexico','Morocco','Peru','Philippines','Poland','Ruassia','South Africa','South Korea','Taiwan','Thailand','Turkey'};
+
+
 dmidx=zeros(length(developed),1);
 emidx=zeros(length(emerging),1);
  %sort variable by number of markets selected
@@ -27,18 +31,21 @@ end
 if group=='dm'
     iso=dmiso;
     idx=dmidx;
+    name=dmname;
 else
     iso=emiso;
     idx=emidx;
+    name=emname;
 end
 nvar=size(est.beta,1);
 ncty=size(est.beta,2);
 N=est.N;
-betadisp=printbeta(est);
-tstatdisp=printtstat(est);
+
     n=size(est.beta,1);  %number of variables   
 nselected=sum(est.selected(:,idx),2);
 [~,order]=sort(nselected,'descend');  
+betadisp=printbeta(est,order);
+tstatdisp=printtstat(est,order);
  fileout = fopen(sprintf('lasso%s %s.tex',group,est.ynames),'w');
  
 fprintf(fileout, '\\begin{sidewaystable}[h!] \n');
@@ -47,7 +54,7 @@ fprintf(fileout,'\\resizebox{1\\textwidth}{!}{\n ');
 fprintf(fileout,'\\renewcommand{\\arraystretch}{1}\n ');
 fprintf(fileout,'\\begin{tabular}{l*{%d}{c}}\n',length(idx));
 fprintf(fileout,'\\hline\\hline \n');
-fprintf(fileout,strcat(repmat('& %s ',1,length(iso)),'\\\\ \n'),iso{:});
+fprintf(fileout,strcat(repmat('& %s ',1,length(iso)),'\\\\ \n'),name{:});
 for i=1:nvar
 fprintf(fileout,strcat('%s',repmat( ' %s ',1,length(iso)),'\\\\ \n'),varlist{order(i)},betadisp(i,idx));
 fprintf(fileout,strcat(repmat('%s ',1,length(iso)),'\\\\ \n'),tstatdisp(i,idx));

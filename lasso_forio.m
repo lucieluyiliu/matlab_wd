@@ -36,10 +36,11 @@ y=y(idx);
 id=numid(idx);
 %initialize lasso parameter by rule of thumb
 Dt = dummyvar(categorical(id));
+yeardummy=yeardummy(idx,:);
 X=X(idx,:); %if any of the columns is nan
-const=ones(size(X,1),1);
+const=[ones(size(X,1),1),yeardummy(:,2:end)]; %partial out
 y=y-mean(y);
-X=X-const*((const'*const)\(const'*X)); %partial out constant
+X=X-const*((const'*const)\(const'*X)); %partial out constant and year dummy
 %remove colinear
 n_cluster=size(Dt,2);
 gamma = .1/log(n_cluster);
